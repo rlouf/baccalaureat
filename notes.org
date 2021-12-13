@@ -1,0 +1,60 @@
+#+TITLE: Notes du baccalauréat
+#+AUTHOR: Rémi Louf
+#+PROPERTY: header-args:latex :results raw :exports results
+#+PROPERTY: header-args:python
+
+#+begin_src python :session premiere :results silent
+import os
+import arviz as az
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pymc3 as pm
+import scipy.stats as stats
+
+plt.rcParams['font.family'] = 'serif'
+if not os.path.exists("figures"):
+    os.makedirs("figures")
+
+notes_df = pd.read_csv('./data/notes_baccalaureat_general_2016.csv', names=['moyenne', 'num_candidats'])[1:]
+notes_df['num_candidats'] = pd.to_numeric(notes_df['num_candidats'])
+notes_df['moyenne'] = pd.to_numeric(notes_df['moyenne'])
+
+num_candidats = notes_df['num_candidats'].values
+moyenne = notes_df['moyenne'].values
+#+end_src
+
+Nous avons à notre disposition les données concernant la première session 2016:
+
+#+begin_src python :session premiere :results graphics file :exports results
+fig, ax = plt.subplots()
+ax.bar(x=moyenne, height=num_candidats, width=0.1, color='black')
+ax.set_xlabel("Moyenne à l'issue de la première session")
+ax.set_ylabel("Nombre de candidats")
+
+# Remove axis lines.
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
+# Set spine extent.
+ax.spines['bottom'].set_bounds(0, 20)
+ax.spines['left'].set_bounds(0, max(num_candidats))
+
+# Set x ticks
+x_ticks = [0, 8, 10, 12, 14, 16, 20]
+ax.xaxis.set_ticks(x_ticks)
+
+plt.figtext(
+    0,
+    -.02,
+    'auteur: @remilouf\nsource: MESNER-DEPP, Résultats définitifs de la session 2016 du baccalauréat',
+    fontsize=6
+)
+
+fname="notes-bac-distribution-2016.png"
+plt.savefig(fname, bbox_inches='tight')
+fname
+#+end_src
+
+#+RESULTS:
+[[file:notes-bac-distribution-2016.svg]]
